@@ -232,6 +232,7 @@ export interface Facility {
   name: string;
   countryCode: string;
   city: string | null;
+  locality: string | null;
   address: string | null;
   phone: string | null;
   organizationId: string | null;
@@ -310,7 +311,7 @@ export interface StructureProfile {
   id: string; type: OrgType; name: string; countryCode: string; city: string | null; address: string | null;
   email: string; phone: string; domain: string | null; registrationNumber: string; contactName: string;
   contactRole: string | null; beds: number | null; verificationStatus: Verification; commissionPercent: number | null;
-  accountStatus: UserStatus; createdAt: string;
+  accountStatus: UserStatus; createdAt: string; locality: string | null;
 }
 export interface Appointment {
   id: string; practitionerId: string; practitionerName: string; patientName: string; facilityName: string | null;

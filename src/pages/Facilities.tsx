@@ -70,7 +70,7 @@ function Sites() {
                 <td><strong>{f.name}</strong></td>
                 <td>{f.organizationType ? ORG_TYPES[f.organizationType] : <span className="hint">Lieu indépendant</span>}</td>
                 <td>{name(f.countryCode)}</td>
-                <td>{f.city ?? '–'}</td>
+                <td>{[f.locality, f.city].filter(Boolean).join(', ') || '–'}</td>
                 <td>{f.address ?? '–'}</td>
                 <td>{f.phone ?? '–'}</td>
                 <td className="actions">
@@ -105,7 +105,7 @@ function FacilityForm({ facility, countries, onClose, onSaved }: {
   facility: Facility | null; countries: Country[]; onClose: () => void; onSaved: () => Promise<void>;
 }) {
   const [f, setF] = useState({
-    name: facility?.name ?? '', countryCode: facility?.countryCode ?? '', city: facility?.city ?? '',
+    name: facility?.name ?? '', countryCode: facility?.countryCode ?? '', city: facility?.city ?? '', locality: facility?.locality ?? '',
     address: facility?.address ?? '', phone: facility?.phone ?? '',
   });
   const [error, setError] = useState<string | null>(null);
@@ -114,7 +114,7 @@ function FacilityForm({ facility, countries, onClose, onSaved }: {
   async function submit(e: FormEvent) {
     e.preventDefault();
     const body = {
-      name: f.name.trim(), countryCode: f.countryCode, city: f.city.trim() || null,
+      name: f.name.trim(), countryCode: f.countryCode, city: f.city.trim() || null, locality: f.locality.trim() || null,
       address: f.address.trim() || null, phone: f.phone.trim() || null,
     };
     try {
@@ -140,6 +140,7 @@ function FacilityForm({ facility, countries, onClose, onSaved }: {
             </select>
           </label>
           <label className="field">Ville<input value={f.city} onChange={set('city')} /></label>
+          <label className="field">Localité<span className="hint">Quartier ou commune</span><input value={f.locality} onChange={set('locality')} maxLength={100} /></label>
           <label className="field">Adresse<input value={f.address} onChange={set('address')} /></label>
           <label className="field">Téléphone
             <PhoneInput value={f.phone} onChange={(phone) => setF({ ...f, phone })} country={f.countryCode} />

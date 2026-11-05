@@ -57,7 +57,7 @@ export default function Structures() {
           <tbody>
             {(list.data?.content ?? []).map((s) => (
               <tr key={s.id}>
-                <td><strong>{s.name}</strong><br /><span className="hint">{ORG_TYPES[s.type]} · {[s.city, country(s.countryCode)].filter(Boolean).join(', ')}{s.domain ? ` · ${s.domain}` : ''}</span></td>
+                <td><strong>{s.name}</strong><br /><span className="hint">{ORG_TYPES[s.type]} · {[s.locality, s.city, country(s.countryCode)].filter(Boolean).join(', ')}{s.domain ? ` · ${s.domain}` : ''}</span></td>
                 <td>{s.registrationNumber}</td>
                 <td>{s.contactName}{s.contactRole ? ` (${s.contactRole})` : ''}<br /><span className="hint">{s.email} · {s.phone}</span></td>
                 <td className="num">{s.beds ?? '–'}</td>
@@ -126,7 +126,7 @@ function CommissionForm({ structure, onClose, onSaved }: { structure: StructureP
 
 function StructureForm({ structure, onClose, onSaved }: { structure: StructureProfile; onClose: () => void; onSaved: () => Promise<void> }) {
   const [f, setF] = useState({
-    type: structure.type, name: structure.name, city: structure.city ?? '', address: structure.address ?? '',
+    type: structure.type, name: structure.name, city: structure.city ?? '', locality: structure.locality ?? '', address: structure.address ?? '',
     phone: structure.phone, domain: structure.domain ?? '', registrationNumber: structure.registrationNumber,
     contactName: structure.contactName, contactRole: structure.contactRole ?? '', beds: structure.beds != null ? String(structure.beds) : '',
   });
@@ -140,7 +140,7 @@ function StructureForm({ structure, onClose, onSaved }: { structure: StructurePr
       await api(`/api/v1/admin/structures/${structure.id}`, {
         method: 'PATCH',
         body: {
-          type: f.type, name: f.name.trim(), city: f.city.trim() || null, address: f.address.trim() || null,
+          type: f.type, name: f.name.trim(), city: f.city.trim() || null, locality: f.locality.trim() || null, address: f.address.trim() || null,
           phone: f.phone, domain: f.domain.trim() || null, registrationNumber: f.registrationNumber.trim(),
           contactName: f.contactName.trim(), contactRole: f.contactRole.trim() || null,
           beds: f.beds.trim() ? Number(f.beds) : null,
@@ -164,6 +164,7 @@ function StructureForm({ structure, onClose, onSaved }: { structure: StructurePr
           </select></label>
           <label className="field"><span>Nom<span className="req">*</span></span><input value={f.name} onChange={set('name')} maxLength={200} required /></label>
           <label className="field">Ville<input value={f.city} onChange={set('city')} /></label>
+          <label className="field">Localité<span className="hint">Quartier ou commune</span><input value={f.locality} onChange={set('locality')} maxLength={100} /></label>
           <label className="field">Adresse<input value={f.address} onChange={set('address')} /></label>
           <label className="field"><span>Téléphone<span className="req">*</span></span><PhoneInput value={f.phone} onChange={(phone) => setF({ ...f, phone })} country={structure.countryCode} required /></label>
           <label className="field">Nom de domaine<input value={f.domain} onChange={set('domain')} placeholder="hopital.sn" /></label>

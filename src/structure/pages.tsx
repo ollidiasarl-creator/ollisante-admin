@@ -296,7 +296,7 @@ export function Sites() {
       <table>
         <thead><tr><th>Nom</th><th>Ville</th><th>Adresse</th><th>Téléphone</th></tr></thead>
         <tbody>
-          {(list.data ?? []).map((s) => <tr key={s.id}><td><strong>{s.name}</strong></td><td>{s.city ?? '–'}</td><td>{s.address ?? '–'}</td><td>{s.phone ?? '–'}</td></tr>)}
+          {(list.data ?? []).map((s) => <tr key={s.id}><td><strong>{s.name}</strong></td><td>{[s.locality, s.city].filter(Boolean).join(', ') || '–'}</td><td>{s.address ?? '–'}</td><td>{s.phone ?? '–'}</td></tr>)}
         </tbody>
       </table>
       {adding && profile.data ? <SiteForm countryCode={profile.data.countryCode} onClose={() => setAdding(false)} onSaved={list.reload} /> : null}
@@ -305,14 +305,14 @@ export function Sites() {
 }
 
 function SiteForm({ countryCode, onClose, onSaved }: { countryCode: string; onClose: () => void; onSaved: () => Promise<void> }) {
-  const [f, setF] = useState({ name: '', city: '', address: '', phone: '' });
+  const [f, setF] = useState({ name: '', city: '', locality: '', address: '', phone: '' });
   const [error, setError] = useState<string | null>(null);
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF({ ...f, [k]: e.target.value });
   async function submit(e: FormEvent) {
     e.preventDefault();
     try {
       // Un site est toujours dans le pays de la structure.
-      await api('/api/v1/structure/sites', { method: 'POST', body: { name: f.name.trim(), countryCode, city: f.city || null, address: f.address || null, phone: f.phone || null } });
+      await api('/api/v1/structure/sites', { method: 'POST', body: { name: f.name.trim(), countryCode, city: f.city || null, locality: f.locality || null, address: f.address || null, phone: f.phone || null } });
       await onSaved();
       onClose();
     } catch (err) {
@@ -326,6 +326,7 @@ function SiteForm({ countryCode, onClose, onSaved }: { countryCode: string; onCl
         <div className="form-grid">
           <label className="field"><span>Nom du site<span className="req">*</span></span><input value={f.name} onChange={set('name')} required /></label>
           <label className="field">Ville<input value={f.city} onChange={set('city')} /></label>
+          <label className="field">Localité<span className="hint">Quartier ou commune</span><input value={f.locality} onChange={set('locality')} maxLength={100} /></label>
           <label className="field">Adresse<input value={f.address} onChange={set('address')} /></label>
           <label className="field">Téléphone<PhoneInput value={f.phone} onChange={(phone) => setF({ ...f, phone })} country={countryCode} /></label>
         </div>
@@ -352,7 +353,7 @@ export function Profile() {
         <table>
           <tbody>
             {([
-              ['Nom', d.name], ['Type', ORG_TYPES[d.type]], ['Pays', d.countryCode], ['Ville', d.city], ['Adresse', d.address],
+              ['Nom', d.name], ['Type', ORG_TYPES[d.type]], ['Pays', d.countryCode], ['Ville', d.city], ['Localité', d.locality], ['Adresse', d.address],
               ['E-mail principal', d.email], ['Téléphone', d.phone], ['Nom de domaine', d.domain], ['Immatriculation', d.registrationNumber],
               ['Personne contact', `${d.contactName}${d.contactRole ? ` (${d.contactRole})` : ''}`], ['Nombre de lits', d.beds],
               ['Statut', d.verificationStatus === 'VERIFIED' ? 'Vérifiée par OLIDIA' : d.verificationStatus === 'PENDING' ? 'En cours de vérification' : 'Refusée'],
@@ -368,7 +369,7 @@ export function Profile() {
 
 function ProfileForm({ profile, onClose, onSaved }: { profile: StructureProfile; onClose: () => void; onSaved: () => Promise<void> }) {
   const [f, setF] = useState({
-    city: profile.city ?? '', address: profile.address ?? '', phone: profile.phone, domain: profile.domain ?? '',
+    city: profile.city ?? '', locality: profile.locality ?? '', address: profile.address ?? '', phone: profile.phone, domain: profile.domain ?? '',
     contactName: profile.contactName, contactRole: profile.contactRole ?? '', beds: profile.beds != null ? String(profile.beds) : '',
   });
   const [error, setError] = useState<string | null>(null);
@@ -390,6 +391,7 @@ function ProfileForm({ profile, onClose, onSaved }: { profile: StructureProfile;
         <p className="hint">Le nom, le type, le pays et l’immatriculation ne se modifient qu’auprès de l’équipe OLIDIA.</p>
         <div className="form-grid">
           <label className="field">Ville<input value={f.city} onChange={set('city')} /></label>
+          <label className="field">Localité<span className="hint">Quartier ou commune</span><input value={f.locality} onChange={set('locality')} maxLength={100} /></label>
           <label className="field">Adresse<input value={f.address} onChange={set('address')} /></label>
           <label className="field"><span>Téléphone<span className="req">*</span></span><PhoneInput value={f.phone} onChange={(phone) => setF({ ...f, phone })} country={profile.countryCode} required /></label>
           <label className="field">Nom de domaine<input value={f.domain} onChange={set('domain')} placeholder="hopital.sn" /></label>
