@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react';
+import { PlaceInputs } from '../PlaceInputs';
 import { api, Appointment, Facility, fee, ORG_TYPES, Specialty, StructureProfile } from '../api';
 import { Empty, ErrorBox, Modal, PageHead, dateTime, errorText, PhoneInput, useLoad } from '../ui';
 import { StructureDocs } from '../Trust';
@@ -325,8 +326,7 @@ function SiteForm({ countryCode, onClose, onSaved }: { countryCode: string; onCl
         <ErrorBox text={error} />
         <div className="form-grid">
           <label className="field"><span>Nom du site<span className="req">*</span></span><input value={f.name} onChange={set('name')} required /></label>
-          <label className="field">Ville<input value={f.city} onChange={set('city')} /></label>
-          <label className="field">Localité<span className="hint">Quartier ou commune</span><input value={f.locality} onChange={set('locality')} maxLength={100} /></label>
+          <PlaceInputs country={countryCode} city={f.city} locality={f.locality} onChange={(city, locality) => setF({ ...f, city, locality })} />
           <label className="field">Adresse<input value={f.address} onChange={set('address')} /></label>
           <label className="field">Téléphone<PhoneInput value={f.phone} onChange={(phone) => setF({ ...f, phone })} country={countryCode} /></label>
         </div>
@@ -390,8 +390,7 @@ function ProfileForm({ profile, onClose, onSaved }: { profile: StructureProfile;
         <ErrorBox text={error} />
         <p className="hint">Le nom, le type, le pays et l’immatriculation ne se modifient qu’auprès de l’équipe OLIDIA.</p>
         <div className="form-grid">
-          <label className="field">Ville<input value={f.city} onChange={set('city')} /></label>
-          <label className="field">Localité<span className="hint">Quartier ou commune</span><input value={f.locality} onChange={set('locality')} maxLength={100} /></label>
+          <PlaceInputs country={profile.countryCode} city={f.city} locality={f.locality} onChange={(city, locality) => setF({ ...f, city, locality })} />
           <label className="field">Adresse<input value={f.address} onChange={set('address')} /></label>
           <label className="field"><span>Téléphone<span className="req">*</span></span><PhoneInput value={f.phone} onChange={(phone) => setF({ ...f, phone })} country={profile.countryCode} required /></label>
           <label className="field">Nom de domaine<input value={f.domain} onChange={set('domain')} placeholder="hopital.sn" /></label>

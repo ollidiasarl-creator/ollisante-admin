@@ -1,4 +1,5 @@
 import { Country, ORG_TYPES, OrgType } from './api';
+import { PlaceInputs } from './PlaceInputs';
 import { PhoneInput } from './ui';
 
 /** Champs d'une fiche structure, communs à l'inscription publique et à l'ajout par l'administration. */
@@ -36,8 +37,7 @@ export function StructureFields({ f, onChange, countries, emailHint }: {
           {countries.map((c) => <option key={c.code} value={c.code}>{c.nameFr}</option>)}
         </select>
       </label>
-      <label className="field">Ville<input value={f.city} onChange={set('city')} /></label>
-      <label className="field">Localité<span className="hint">Quartier ou commune</span><input value={f.locality} onChange={set('locality')} maxLength={100} /></label>
+      <PlaceInputs country={f.countryCode} city={f.city} locality={f.locality} onChange={(city, locality) => onChange({ ...f, city, locality })} />
       <label className="field">Adresse<input value={f.address} onChange={set('address')} /></label>
       <label className="field"><span>Numéro d’immatriculation<span className="req">*</span></span><span className="hint">RCCM, NINEA, NIF, SIRET…</span><input value={f.registrationNumber} onChange={set('registrationNumber')} required /></label>
       <label className="field"><span>E-mail principal<span className="req">*</span></span><span className="hint">{emailHint}</span><input type="email" value={f.email} onChange={set('email')} required /></label>

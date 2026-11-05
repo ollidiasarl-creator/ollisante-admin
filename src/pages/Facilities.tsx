@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react';
+import { PlaceInputs } from '../PlaceInputs';
 import { api, Country, Facility, ORG_TYPES } from '../api';
 import { Empty, ErrorBox, Modal, PageHead, PhoneInput, errorText, useLoad } from '../ui';
 import Structures, { StructureCreateForm } from './Structures';
@@ -139,8 +140,7 @@ function FacilityForm({ facility, countries, onClose, onSaved }: {
               {countries.map((c) => <option key={c.code} value={c.code}>{c.nameFr}</option>)}
             </select>
           </label>
-          <label className="field">Ville<input value={f.city} onChange={set('city')} /></label>
-          <label className="field">Localité<span className="hint">Quartier ou commune</span><input value={f.locality} onChange={set('locality')} maxLength={100} /></label>
+          <PlaceInputs country={f.countryCode} city={f.city} locality={f.locality} onChange={(city, locality) => setF({ ...f, city, locality })} />
           <label className="field">Adresse<input value={f.address} onChange={set('address')} /></label>
           <label className="field">Téléphone
             <PhoneInput value={f.phone} onChange={(phone) => setF({ ...f, phone })} country={f.countryCode} />

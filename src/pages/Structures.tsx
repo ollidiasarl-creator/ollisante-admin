@@ -1,4 +1,5 @@
 import { FormEvent, useState } from 'react';
+import { PlaceInputs } from '../PlaceInputs';
 import { api, Country, ORG_TYPES, OrgType, Page, StructureProfile, Verification } from '../api';
 import { EMPTY_STRUCTURE, StructureFields, structureBody } from '../StructureFields';
 import { ReviewModal, alertsBeforeValidation } from '../Trust';
@@ -163,8 +164,7 @@ function StructureForm({ structure, onClose, onSaved }: { structure: StructurePr
             {(Object.keys(ORG_TYPES) as OrgType[]).map((t) => <option key={t} value={t}>{ORG_TYPES[t]}</option>)}
           </select></label>
           <label className="field"><span>Nom<span className="req">*</span></span><input value={f.name} onChange={set('name')} maxLength={200} required /></label>
-          <label className="field">Ville<input value={f.city} onChange={set('city')} /></label>
-          <label className="field">Localité<span className="hint">Quartier ou commune</span><input value={f.locality} onChange={set('locality')} maxLength={100} /></label>
+          <PlaceInputs country={structure.countryCode} city={f.city} locality={f.locality} onChange={(city, locality) => setF({ ...f, city, locality })} />
           <label className="field">Adresse<input value={f.address} onChange={set('address')} /></label>
           <label className="field"><span>Téléphone<span className="req">*</span></span><PhoneInput value={f.phone} onChange={(phone) => setF({ ...f, phone })} country={structure.countryCode} required /></label>
           <label className="field">Nom de domaine<input value={f.domain} onChange={set('domain')} placeholder="hopital.sn" /></label>
