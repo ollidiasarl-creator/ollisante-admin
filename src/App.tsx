@@ -46,7 +46,7 @@ const ADMIN_MENU: { group?: string; routes: Route[] }[] = [
     routes: [
       { path: 'comptabilite', label: 'Comptabilité', render: () => <Accounting /> },
       { path: 'statistiques', label: 'Statistiques', render: () => <Statistics /> },
-      { path: 'affiches', label: 'Affiches', render: () => <Campaigns /> },
+      { path: 'affiches', label: 'Affiches et test A/B', render: () => <Campaigns /> },
       { path: 'faq', label: 'FAQ', render: () => <Faq /> },
       { path: 'journal', label: 'Journal des actions', render: () => <Audit /> },
       { path: 'parametres', label: 'Paramètres', render: () => <SettingsPage /> },
